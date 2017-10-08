@@ -1,0 +1,60 @@
+{
+  "rules": {
+
+    "activate": {
+      ".read": "root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      ".write": "root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      "$newActivation": {
+        ".read": "auth != null && root.child('activate').child($newActivation).child('uid').val() === auth.uid",
+        ".write": "!data.exists() && auth != null",
+        ".validate": "auth != null && newData.child('token').val() == root.child('token').val() &&  !root.child('activate').hasChildren() && newData.hasChildren(['uid', 'token']) && (root.child('users').child(auth.uid).child('lastActivation').val()==null || now - root.child('users').child(auth.uid).child('lastActivation').val() > root.child('interval').val() || root.child('users').child(auth.uid).child('isAdmin').val() === true )"
+      }
+    },
+
+    "released": {
+      ".read": false,
+      ".write": "auth != null",
+      "$newActivation": {
+        ".read": "auth != null && root.child('activate').child($newActivation).child('uid').val() === auth.uid",
+        ".write": "!data.exists() && auth != null",
+        ".validate": "auth != null && newData.child('token').val() == root.child('token').val() &&  !root.child('activate').hasChildren() && newData.hasChildren(['uid', 'token']) && (root.child('users').child(auth.uid).child('lastActivation').val()==null || now - root.child('users').child(auth.uid).child('lastActivation').val() > root.child('interval').val() || root.child('users').child(auth.uid).child('isAdmin').val() === true )"
+      }
+    },    
+
+    "token": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      ".write": false
+    },
+
+    "users": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      ".write": "auth != null && root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
+      }
+    },
+
+    "interval": {
+      ".read": true
+    },
+
+    "releaseInterval": {
+      ".read": true
+    },
+
+    "message": {
+      ".read": true,
+      ".write": true
+
+    },
+      
+    "winners": {
+      ".read": "root.child('users').child(auth.uid).child('isAdmin').val() === true",
+      ".write": "root.child('users').child(auth.uid).child('isAdmin').val() === true"
+    },
+
+    ".read": false,
+    ".write": false
+  }
+}

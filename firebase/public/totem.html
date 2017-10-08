@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Estude na Udacity - token</title>
+    <link rel="manifest" href="manifest.json">
+    <style media="screen">
+      body {
+        font-family: Roboto, Arial, sans-serif;
+        background: rgb(3,155,229); /*#ECEFF1*/;
+        color: rgba(0,0,0,0.87);
+
+      }
+
+      a {
+        color: rgb(3,155,229);
+      }
+
+      #message {
+        /*max-width: 800px;*/
+        margin: 40px auto;
+/*        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2),0 1px 1px 0 rgba(0,0,0,0.14),0 2px 1px -1px rgba(0,0,0,0.12);
+        border-radius: 2px;
+        background: white;
+        padding: 16px 24px;*/
+      }
+
+      #message h1 {
+        font-size: 22px;
+        font-weight: 500;
+        text-align: center;
+        margin: 0 0 16px;
+      }
+
+      #message p {
+        font-weight: 300;
+        line-height: 150%;
+      }
+
+      #message ul {
+        list-style: none;
+        margin: 16px auto 0;
+        padding: 0;
+        text-align: center;
+      }
+
+      #message li {
+        display: inline-block;
+
+      }
+
+      #message a {
+        margin: 5px;
+        display: inline-block;
+        padding: 8px;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-weight: 500;
+        background: rgb(3,155,229);
+        color: white;
+        border: 1px solid rgb(3,155,229);
+        border-radius: 3px;
+        font-size: 14px;
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+        float: left;
+        margin: 0 auto;
+        position: absolute;
+        right: .5em;
+        bottom: .5em;
+      }
+
+      img {
+        display: block;
+        margin: 0 auto 20px;
+        max-width: 100%;
+      }
+
+      .content {
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .step {
+        margin-bottom: 50px;
+      }
+
+      body.step-01 .step-01 .content {
+
+      }
+
+      h1#token {
+        font-size: 20em;
+        margin: 0;
+        color: #fff; /*rgb(3,155,229)*/
+      }
+
+      h2, p {
+        color: rgb(46, 61, 73); /*rgb(46, 61, 73)*/
+      }
+
+      h2 {
+        font-size: 4em;
+        font-weight: 300;
+        text-align: center;
+        margin: 0;
+      }
+      h2 strong {
+        font-weight: 600;
+      }
+      p {
+        font-size: 2em;
+        text-align: center;
+        margin: 0;
+      }
+
+
+
+
+    </style>
+  </head>
+  <body>
+
+    <div id="message">
+      <h1 id="token"></h1>
+
+      <h2><strong>estudenaudacity.firebaseapp.com</strong><br/>
+      </h2>
+      <p>Acesse o link e informe o token acima para ativar a máquina.</p>
+      <a href="#" id="btnPush">Ativação Manual</a>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDeDmOob3a3WycCe8pfzfz8vUxouusr3KU",
+        authDomain: "estudenaudacity.firebaseapp.com",
+        databaseURL: "https://estudenaudacity.firebaseio.com",
+        storageBucket: "estudenaudacity.appspot.com",
+        messagingSenderId: "426118148766",
+      };
+      firebase.initializeApp(config);
+
+
+      var auth = firebase.auth();
+      var token;
+
+      firebase.database().ref("/token").on('value', function(s){
+      	token = s.val();
+      	document.getElementById("token").innerText = token ? token : "";
+
+      });
+
+
+      var pushActivation = function(token) {
+        firebase.database().ref("/activate").push({
+          "uid": auth.getUid(),
+          "token": token,
+          "manual": true
+        }, function(e){
+          console.log("RETURNING PUSH ACTIVATION", e);
+        });
+      }
+
+
+      document.getElementById('btnPush').addEventListener('click', function(e) {
+        e.preventDefault();
+        pushActivation(token);
+      });
+
+
+    </script>
+
+  </body>
+</html>

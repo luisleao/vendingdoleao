@@ -1,0 +1,19 @@
+{
+  "versionLabel": "1.0.0",
+  "agentInfo": {
+    "languageCode": "en-US",
+    "projectId": "estudenaudacity",
+    "voiceName": "female_1"
+  },
+  "actions": [
+    {
+      "initialTrigger": {
+        "intent": "assistant.intent.action.MAIN"
+      },
+      "httpExecution": {
+        "url": "https://us-central1-estudenaudacity.cloudfunctions.net/raffleUser"
+      }
+    }
+  ]
+}
+

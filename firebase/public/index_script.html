@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Estude na Udacity</title>
+    <style media="screen">
+      body {
+        font-family: Roboto, Arial, sans-serif;
+        background: #ECEFF1;
+        color: rgba(0,0,0,0.87);
+      }
+
+      a {
+        color: rgb(3,155,229);
+      }
+
+      #message {
+        max-width: 500px;
+        margin: 40px auto;
+/*        box-shadow: 0 1px 3px 0 rgba(0,0,0,0.2),0 1px 1px 0 rgba(0,0,0,0.14),0 2px 1px -1px rgba(0,0,0,0.12);
+        border-radius: 2px;
+        background: white;
+        padding: 16px 24px;*/
+      }
+
+      #message h1 {
+        font-size: 22px;
+        font-weight: 500;
+        text-align: center;
+        margin: 0 0 16px;
+      }
+
+      #message p {
+        font-weight: 300;
+        line-height: 150%;
+      }
+
+      #message ul {
+        list-style: none;
+        margin: 16px auto 0;
+        padding: 0;
+        text-align: center;
+      }
+
+      #message li {
+        display: inline-block;
+
+      }
+
+      #message li a {
+        margin: 5px;
+        display: inline-block;
+        padding: 8px;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-weight: 500;
+        background: rgb(3,155,229);
+        color: white;
+        border: 1px solid rgb(3,155,229);
+        border-radius: 3px;
+        font-size: 14px;
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+        float: left;
+      }
+
+      img {
+        display: block;
+        margin: 0 auto 20px;
+        max-width: 100%;
+      }
+
+      .content {
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .step {
+        margin-bottom: 50px;
+      }
+
+      body.step-01 .step-01 .content {
+
+      }
+
+
+
+ 
+
+    </style>
+  </head>
+  <body>
+
+    <div id="message">
+
+      <h1></h1>
+      <p>Para ativar a dispensadora e participar dessa promoção exclusiva aos participantes do PHP Experience 2017, siga os passos a seguir:</p>
+
+
+      <div id="step1" class="step-01 step">
+     
+        <img src="https://br.udacity.com/assets/images/promos/imasters/step01.svg" alt="Cadastre-se Grátis!">
+
+        <!-- LOGIN -->
+        <ul>
+          <li><a href="#" id="btnGoogle">Google Login</a></li>
+          <li><a href="#" id="btnFacebook">Facebook Login</a></li>
+        </ul>
+
+        <p>Faça seu login primeiro.</p>
+
+      </div>
+
+      <div id="step2" class="step-02 step">
+        <img src="https://br.udacity.com/assets/images/promos/imasters/step02.svg" alt="">
+
+        <!-- TOKEN -->
+        <h1>Olá<span id="nome"></span>!</h1>
+        <p>Você está autenticado, agora basta informar o código exibido ao lado da dispensadora para ativá-la.</p>
+
+      </div>
+
+      <div id="step3" class="step-03 step">
+        <img src="https://br.udacity.com/assets/images/promos/imasters/step03.svg" alt="">
+        <!-- RESULT -->
+        <!-- MESSAGE -->
+
+
+      </div>
+
+      <div id="step4" class="step-04 step">
+        <img src="https://br.udacity.com/assets/images/promos/imasters/step04.svg" alt="">
+        <!-- RESULT -->
+        <!-- MESSAGE -->
+
+
+      </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+    <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>
+    <script>
+      var minUse = 5;
+
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyDeDmOob3a3WycCe8pfzfz8vUxouusr3KU",
+        authDomain: "estudenaudacity.firebaseapp.com",
+        databaseURL: "https://estudenaudacity.firebaseio.com",
+        storageBucket: "estudenaudacity.appspot.com",
+        messagingSenderId: "426118148766",
+      };
+      firebase.initializeApp(config);
+
+
+      var gProvider = new firebase.auth.GoogleAuthProvider();
+          gProvider.addScope('https://www.googleapis.com/auth/plus.login');
+
+      var fProvider = new firebase.auth.FacebookAuthProvider();
+          fProvider.setCustomParameters({
+            'display': 'popup'
+          });
+
+
+      var auth = firebase.auth();
+
+      var showUiBasedAuth = function() {
+        console.log("showUiBasedAuth!!!");
+        //TODO: hide login buttons! Show logout?
+
+        firebase.database().ref("/users/" + auth.getUid()).on('value', function(s){
+          var user_data = s.val();
+          console.log(user_data);
+          if (user_data) {
+            //TODO: exibir step 2
+            if (user_data.createdAt) {
+              var createAtDiff = (new Date() - new Date(user_data.createdAt))/1000/60;
+              console.log("createAtDiff", createAtDiff, new Date(user_data.createdAt), new Date());
+            }
+
+            //TODO: verificar se já usou a máquina nos últimos 15 minutos
+            var lastUseDiff = (new Date() - new Date(user_data.lastActivation))/1000/60;
+            if (user_data.lastActivation && lastUseDiff < minUse) {
+              //TODO: exibir mensagem aguarde tempo
+              console.log("lastUseDiff", lastUseDiff);
+            } else {
+              //TODO: exibir input
+              console.log("SHOW INPUT TOKEN");
+            }
+            console.log("TEM USER!!!");
+          } else {
+            //SHOW LOADING...
+            console.log("SHOW LOADING...");
+          }
+        });
+
+        //TODO: monitor /user/[uid]/choosed
+        //TODO: play audio and change interface if user was choosed
+
+
+      }
+
+
+      //Monitor user Auth state changed (to change interface)
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          // User is signed in.
+          showUiBasedAuth();
+        } else {
+          // No user is signed in.
+          //TODO: exibir step 1
+          console.log("NOT LOGGED!");
+
+        }
+      });
+
+
+      //TODO: PUSH METHOD TO /activate/[random_id]
+      //TODO: set database.rules.json permissions
+      /////// - only add /activate/[randID] if [randID].token == current_token
+      /////// *** maybe need to use a CloudFunction Request with token and UID to avoid concurrency
+
+
+
+
+      // var authenticate_return = function(result) {
+      //   // Accounts successfully linked.
+      //   var credential = result.credential;
+      //   var user = result.user;
+      //   console.log("USER", credential, user);
+      //   // ...
+      //   showUiBasedAuth();
+
+      // }
+
+      var authenticate = function(provider) {
+
+        auth.signInWithPopup(provider).catch(function(error) {
+          console.log("returning...");
+
+          // An error happened.
+          if (error) {
+            if (error.code === 'auth/account-exists-with-different-credential') {
+              console.log("CREDENTIAL ERR", error);
+
+              var pendingCred = error.credential;
+              // The provider account's email address.
+              var email = error.email;
+              // Get registered providers for this email.
+              auth.fetchProvidersForEmail(email).then(function(providers) {
+
+                console.log("PROVIDERS", providers);
+                // Step 3.
+                // If the user has several providers,
+                // the first provider in the list will be the "recommended" provider to use.
+
+                // All the other cases are external providers.
+                // Construct provider object for that provider.
+                // TODO: implement getProviderForProviderId.
+                var provider = getProviderForProviderId(providers[0]);
+                //TODO: exibir mensagem e botão de login com conta já autorizada em outro provider
+
+                // auth.signInWithPopup(provider).then(function(result) {
+                //   result.user.link(pendingCred).then(function() {
+                //     authenticate_return(result);
+                //   });
+                // });
+              });
+            } else {
+              console.log("ERR", error);
+            }
+          } 
+          // else {
+          //   console.log("NO ERROR");
+          //   //authenticated
+          //   if (result.credential) {
+          //     authenticate_return(result);
+          //   }
+          // }
+
+        });
+      }
+
+
+
+      document.getElementById('btnGoogle').addEventListener('click', function(e) {
+        e.preventDefault();
+        authenticate(gProvider);
+      });
+      document.getElementById('btnFacebook').addEventListener('click', function(e) {
+        e.preventDefault();
+        authenticate(fProvider);
+      });
+
+      firebase.auth().getRedirectResult().then(function(result) {
+        if (result.credential) {
+          // Accounts successfully linked.
+          var credential = result.credential;
+          var user = result.user;
+          console.log("USER", credential, user);
+          // ...
+        }
+      }).catch(function(error) {
+        // Handle Errors here.
+        // ...
+        console.log("RESULT ERR", error);
+      });
+
+
+
+
+      // //firebase.auth().signInWithRedirect(fProvider);
+      // firebase.auth().getRedirectResult().then(function(result) {
+      //   if (result.credential) {
+      //     // This gives you a Google Access Token. You can use it to access the Google API.
+      //     console.log("LOGGED!", result);
+
+      //     var token = result.credential.accessToken;
+      //     // ...
+      //   }
+      //   // The signed-in user info.
+      //   var user = result.user;
+      // }).catch(function(error) {
+      //   // Handle Errors here.
+      //   var errorCode = error.code;
+      //   var errorMessage = error.message;
+      //   // The email of the user's account used.
+      //   var email = error.email;
+      //   // The firebase.auth.AuthCredential type that was used.
+      //   var credential = error.credential;
+      //   // ...
+      // });
+
+
+      var getProviderForProviderId = function(targetProvider) {
+        switch(targetProvider) {
+          case "google.com":
+            return gProvider;
+          case "Facebook.com":
+            return fProvider;
+          default:
+            return fProvider;
+        }
+      }
+
+
+      var pushActivation = function(token) {
+        firebase.database().ref("/activate").push({
+          "uid": auth.getUid(),
+          "token": token
+        }, function(e){
+          console.log("RETURNING PUSH ACTIVATION", e);
+        });
+      }
+
+
+
+
+    </script>
+
+  </body>
+</html>
